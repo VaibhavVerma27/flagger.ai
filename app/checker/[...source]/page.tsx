@@ -1,32 +1,42 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {useParams} from "next/navigation";
+import axios from "axios";
 
 const ExtensionHandler = () => {
+  const params = useParams();
+  const source = params.source?.[0];
+  const decodedSource = source ? decodeURIComponent(source as string) : null;
+
   const [extensionData, setExtensionData] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
 
 
   useEffect(() => {
-    window.addEventListener('message', (event) => {
-      // Verify sender origin
+    async function setData() {
+      try {
+        const res = await axios.get(`http://localhost:3000/api/cache/${source}`)
 
-      if (event.data.type === 'TERMS_DATA') {
-        setExtensionData(event.data.payload);
+        if (res.status === 200) {
+          setExtensionData(res.data);
+        } else if (res.status === 404) {
+          alert("data not found")
+        }
+      } catch (e) {
+        alert("failed to fetch data")
       }
-    })
-  }, []);
+    }
 
-  // Simulate API call to process the data
+    setData();
+  }, [source]);
+
+
   const processData = async () => {
     if (!extensionData) return;
 
     try {
-      const response = await fetch("/api/processData", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: extensionData }),
-      });
+      const res = await axios.
 
       const result = await response.json();
       setResult(result.message);
@@ -44,7 +54,7 @@ const ExtensionHandler = () => {
       <div className="w-full max-w-2xl p-6 bg-white rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Extension Data</h2>
         {extensionData ? (
-          <pre className="p-4 bg-gray-200 rounded text-sm overflow-x-auto">
+          <pre className="p-4 bg-gray-200 rounded text-sm overflow-x-auto text-gray-950">
             {JSON.stringify(extensionData, null, 2)}
           </pre>
         ) : (
