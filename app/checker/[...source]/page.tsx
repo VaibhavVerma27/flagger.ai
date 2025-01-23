@@ -7,7 +7,7 @@ import axios from "axios";
 const ExtensionHandler = () => {
   const params = useParams();
   const source = params.source?.[0];
-  const decodedSource = source ? decodeURIComponent(source as string) : null;
+  // const decodedSource = source ? decodeURIComponent(source as string) : null;
 
   const [extensionData, setExtensionData] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
@@ -24,6 +24,7 @@ const ExtensionHandler = () => {
           alert("data not found")
         }
       } catch (e) {
+        console.log(e);
         alert("failed to fetch data")
       }
     }
