@@ -36,7 +36,11 @@ const ExtensionHandler = () => {
     if (!extensionData) return;
 
     try {
-      const res = await axios.
+      const response = await fetch("/api/processData", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: extensionData }),
+      });
 
       const result = await response.json();
       setResult(result.message);
