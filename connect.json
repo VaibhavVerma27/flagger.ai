@@ -1,0 +1,13 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "flaggerai",
+            "Group": "Flagger",
+            "Host": "pg-280013d1-flaggerai.l.aivencloud.com",
+            "Port": 27074,
+            "MaintenanceDB": "defaultdb",
+            "Username": "avnadmin",
+            "SSLMode": "require"
+        }
+    }
+}
