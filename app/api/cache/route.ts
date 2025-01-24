@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
     const data = await redis.get(currentUrl);
 
-    if (data) {
+    if (data && data === bodyText) {
       return NextResponse.json({status: 200})
     }
 

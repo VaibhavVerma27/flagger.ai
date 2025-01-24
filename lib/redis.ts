@@ -1,19 +1,12 @@
-import Redis from "ioredis";
+import { Redis } from '@upstash/redis';
 
 let redis: Redis | null = null;
 
 export const getRedisClient = (): Redis => {
   if (!redis) {
-    redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379", {
-      maxRetriesPerRequest: 3, // Optional: Retry behavior
-    });
-
-    redis.on("connect", () => {
-      console.log("Connected to Redis");
-    });
-
-    redis.on("error", (err) => {
-      console.error("Redis connection error:", err);
+    redis = new Redis({
+      url: process.env.KV_REST_API_URL,
+      token: process.env.KV_REST_API_TOKEN,
     });
   }
 

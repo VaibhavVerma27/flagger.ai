@@ -1,12 +1,11 @@
-import { NextResponse} from "next/server";
+import {NextRequest, NextResponse} from "next/server";
 import {getRedisClient} from "@/lib/redis";
-import {NextApiRequest} from "next";
 
-export async function GET(req: NextApiRequest) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{url: string}> }) {
   try {
     const redis = getRedisClient();
 
-    const { url } = await req.query;
+    const { url } = await params;
 
     if (!url || Array.isArray(url)) {
       return NextResponse.json({error: "url not found or is not valid"}, {status: 403})

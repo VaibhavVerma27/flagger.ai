@@ -271,8 +271,7 @@ const getBotResponse = async (
 
 export async function POST(request: Request) {
     try {
-        const body = await request.json();
-        const { text, collectionName } = body;
+        const { text, collectionName } = await request.json();
 
         if (!collectionName) {
             return NextResponse.json({ error: 'Collection name is required' }, { status: 400 });
