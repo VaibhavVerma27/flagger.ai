@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({status: 200})
     }
 
-    await redis.set(currentUrl, bodyText, "EX", 86400);
+    await redis.set(currentUrl, bodyText, {ex: 86400});
     const savedData = redis.get(currentUrl)
 
     if (!savedData) {

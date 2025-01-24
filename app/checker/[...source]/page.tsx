@@ -11,10 +11,12 @@ const ExtensionHandler = () => {
 
   const [extensionData, setExtensionData] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
 
   useEffect(() => {
     async function setData() {
+      setLoading(true);
       try {
         const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/cache/${source}`)
 
@@ -22,10 +24,13 @@ const ExtensionHandler = () => {
           setExtensionData(res.data);
         } else if (res.status === 404) {
           alert("data not found")
+
         }
       } catch (e) {
         console.log(e);
         alert("failed to fetch data")
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -50,6 +55,10 @@ const ExtensionHandler = () => {
       setResult("Failed to process data");
     }
   };
+
+  if (loading) {
+    return <div>loading...</div>
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-6">
