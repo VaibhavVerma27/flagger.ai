@@ -5,7 +5,10 @@ export async function POST(req: NextRequest) {
   try {
     const redis = getRedisClient();
 
-    const { bodyText, currentUrl } = await  req.json();
+    const { bodyText, currentUrl } = await req.json();
+
+    console.log(bodyText);
+    console.log(currentUrl);
 
     if (!bodyText || !currentUrl) {
       return NextResponse.json({error: "data not found"}, {status: 403})
