@@ -11,7 +11,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{url: 
       return NextResponse.json({error: "url not found or is not valid"}, {status: 403})
     }
 
-    const decodedUrl = decodeURI(url);
+    const decodedUrl = decodeURIComponent(url);
 
     const data = await redis.get(decodedUrl);
 

@@ -5,14 +5,15 @@ import {useParams} from "next/navigation";
 import axios from "axios";
 
 const ExtensionHandler = () => {
-  const params = useParams();
-  const source = params.source?.[0];
-  // const decodedSource = source ? decodeURIComponent(source as string) : null;
-
   const [extensionData, setExtensionData] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const params = useParams();
+  let source = params.source;
 
+  if (Array.isArray(source)) {
+    source = source.join();
+  }
 
   useEffect(() => {
     async function setData() {
