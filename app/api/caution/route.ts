@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import Groq from 'groq-sdk';
+import prisma from "@/lib/prisma";
 
 // Define error interfaces
 interface QdrantError extends Error {
@@ -271,10 +272,18 @@ const getBotResponse = async (
 
 export async function POST(request: Request) {
     try {
-        const { text, collectionName } = await request.json();
+        let { text, collectionName } = await request.json();
 
-        if (!collectionName) {
-            return NextResponse.json({ error: 'Collection name is required' }, { status: 400 });
+        if (!collectionName || !text) {
+            return NextResponse.json({ error: 'website name and text is required' }, { status: 400 });
+        }
+
+        collectionName = decodeURI(collectionName)
+
+        const alreadyProcessed = await prisma.website.findFirst({where: {websiteURL: collectionName}});
+
+        if (alreadyProcessed) {
+            return NextResponse.json(alreadyProcessed.text, { status: 200 });
         }
 
         if (text) {
@@ -283,7 +292,15 @@ export async function POST(request: Request) {
 
         const response = await getBotResponse(collectionName);
 
-        return NextResponse.json({ response }, { status: 200 });
+        await prisma.website.create({
+            data: {
+                text: response,
+                websiteURL: collectionName,
+                createdAt: new Date().toISOString(),
+            }
+        })
+
+        return NextResponse.json(response, { status: 200 });
     } catch (error) {
         const err = error as Error;
         console.error('API error:', err);

@@ -8,6 +8,7 @@ const ExtensionHandler = () => {
   const [extensionData, setExtensionData] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [processing, setProcessing] = useState<boolean>(false);
   const params = useParams();
   let source = params.source;
 
@@ -25,7 +26,6 @@ const ExtensionHandler = () => {
           setExtensionData(res.data);
         } else if (res.status === 404) {
           alert("data not found")
-
         }
       } catch (e) {
         console.log(e);
@@ -42,52 +42,64 @@ const ExtensionHandler = () => {
   const processData = async () => {
     if (!extensionData) return;
 
+    setProcessing(true);
     try {
-      const response = await fetch("/api/processData", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: extensionData }),
-      });
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/caution`, {collectionName: source, text: extensionData});
 
-      const result = await response.json();
-      setResult(result.message);
+    if (response.status === 200) {
+      setResult(response.data);
+    } else {
+      setResult("Failed to process data");
+    }
     } catch (error) {
       console.error("Error processing data:", error);
       setResult("Failed to process data");
+    } finally {
+      setProcessing(false);
     }
   };
 
   if (loading) {
-    return <div>loading...</div>
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900 text-gray-200">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bg-red-600 rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bg-red-600 rounded-full animate-bounce delay-200"></div>
+          <div className="w-3 h-3 bg-red-600 rounded-full animate-bounce delay-400"></div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-6">
-      <h1 className="text-3xl font-bold text-blue-600 mb-6">
-        Browser Extension Data Handler
+    <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center px-4 py-6">
+      <h1 className="text-3xl font-bold text-white mb-6 text-center">
+        Extension Data Viewer
       </h1>
-      <div className="w-full max-w-2xl p-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Extension Data</h2>
+      <div className="w-full max-w-3xl p-6 bg-gray-800 rounded-lg shadow-lg">
+        <h2 className="text-xl font-semibold text-gray-100 mb-4">Extension Data</h2>
         {extensionData ? (
-          <pre className="p-4 bg-gray-200 rounded text-sm overflow-x-auto text-gray-950">
-            {JSON.stringify(extensionData, null, 2)}
-          </pre>
+          <div className="max-h-96 overflow-y-auto bg-gray-700 p-4 rounded border border-gray-600 text-gray-200 text-sm">
+            <pre className="whitespace-pre-wrap break-words">{JSON.stringify(extensionData, null, 2)}</pre>
+          </div>
         ) : (
-          <p className="text-gray-600">No data received yet.</p>
+          <p className="text-gray-400">No data received yet.</p>
         )}
 
         <button
-          className="mt-4 px-4 py-2 bg-blue-500 text-white font-semibold rounded hover:bg-blue-600"
+          className={`mt-4 w-full px-4 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-500 transition ${
+            !extensionData && "opacity-50 cursor-not-allowed"
+          }`}
           onClick={processData}
-          disabled={!extensionData}
+          disabled={!extensionData || processing}
         >
           Process Data
         </button>
 
         {result && (
-          <div className="mt-6">
+          <div className="mt-6 bg-gray-700 p-4 rounded text-gray-200">
             <h2 className="text-lg font-semibold mb-2">Result</h2>
-            <p className="p-4 bg-green-200 rounded">{result}</p>
+            <p>{result}</p>
           </div>
         )}
       </div>

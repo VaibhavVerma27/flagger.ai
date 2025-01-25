@@ -15,7 +15,7 @@ datasource db {
 
 model Website {
   id         Int      @id @default(autoincrement())
-  text       String   
+  text       String
   websiteURL String
   createdAt  DateTime @default(now())
 }
