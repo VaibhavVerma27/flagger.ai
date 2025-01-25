@@ -44,7 +44,7 @@ const ExtensionHandler = () => {
 
     setProcessing(true);
     try {
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/caution`, {collectionName: source, text: extensionData});
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/caution`, {collectionNameU: source, text: extensionData});
 
     if (response.status === 200) {
       setResult(response.data);

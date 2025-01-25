@@ -272,13 +272,13 @@ const getBotResponse = async (
 
 export async function POST(request: Request) {
     try {
-        let { text, collectionName } = await request.json();
+        const  { text, collectionNameU } = await request.json();
 
-        if (!collectionName || !text) {
+        if (!collectionNameU || !text) {
             return NextResponse.json({ error: 'website name and text is required' }, { status: 400 });
         }
 
-        collectionName = decodeURI(collectionName)
+        const collectionName = decodeURIComponent(collectionNameU)
 
         const alreadyProcessed = await prisma.website.findFirst({where: {websiteURL: collectionName}});
 
