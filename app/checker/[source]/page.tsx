@@ -88,7 +88,7 @@ const ExtensionHandler = () => {
 
         <button
           className={`mt-4 w-full px-4 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-500 transition ${
-            !extensionData && "opacity-50 cursor-not-allowed"
+            processing && "opacity-50 cursor-not-allowed"
           }`}
           onClick={processData}
           disabled={!extensionData || processing}
