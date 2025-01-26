@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {useParams} from "next/navigation";
+import { useParams } from "next/navigation";
 import axios from "axios";
 
 const ExtensionHandler = () => {
@@ -17,40 +17,47 @@ const ExtensionHandler = () => {
   }
 
   useEffect(() => {
-    async function setData() {
+    async function fetchData() {
       setLoading(true);
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/cache/${source}`)
-
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/cache/${source}`);
         if (res.status === 200) {
           setExtensionData(res.data);
         } else if (res.status === 404) {
-          alert("data not found")
+          alert("Data not found");
         }
       } catch (e) {
         console.log(e);
-        alert("failed to fetch data")
+        alert("Failed to fetch data");
       } finally {
         setLoading(false);
       }
     }
 
-    setData();
+    fetchData();
   }, [source]);
 
+  useEffect(() => {
+    if (extensionData) {
+      processData();
+    }
+  }, [extensionData]);
 
   const processData = async () => {
     if (!extensionData) return;
 
     setProcessing(true);
     try {
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/caution`, {collectionNameU: source, text: extensionData});
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/caution`, {
+        collectionNameU: source,
+        text: extensionData,
+      });
 
-    if (response.status === 200) {
-      setResult(response.data);
-    } else {
-      setResult("Failed to process data");
-    }
+      if (response.status === 200) {
+        setResult(response.data);
+      } else {
+        setResult("Failed to process data");
+      }
     } catch (error) {
       console.error("Error processing data:", error);
       setResult("Failed to process data");
