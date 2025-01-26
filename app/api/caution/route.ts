@@ -228,12 +228,11 @@ const getBotResponse = async (
         // Split context into manageable chunks
         const contextChunks = chunkText(fullContext);
         const analysisPromises = contextChunks.map(async (chunk) => {
-            const prompt = `You are a helpful bot which warns the user about various Cautions in Terms and Conditions of a Website. Analyze this section of the terms and conditions for flaws, unclear language, data vulnerabilities, and security concerns. If you find any issues, list them clearly. Here is the text section to analyze: ${chunk}`;
-
+            const prompt = `🔍 Analyze this section of the terms and conditions for flaws, unclear language, data vulnerabilities, and security concerns. Use emojis in your output to highlight issues (e.g., ⚠️ for warnings, 🔒 for security, 🛑 for critical concerns). List findings clearly and concisely in bullet points. Text to analyze: ${chunk}.`
             try {
                 const completion = await groqClient.chat.completions.create({
                     messages: [{ role: 'user', content: prompt }],
-                    model: 'llama-3.3-70b-versatile',
+                    model: 'llama-3.1-8b-instant',
                 });
                 
                 return completion.choices[0]?.message?.content ?? '';
@@ -258,7 +257,7 @@ const getBotResponse = async (
 
         const finalSummary = await groqClient.chat.completions.create({
             messages: [{ role: 'user', content: summaryPrompt }],
-            model: 'llama3-8b-8192',
+            model: 'llama-3.1-8b-instant',
         });
 
         return finalSummary.choices[0]?.message?.content ?? 'No content';
