@@ -23,6 +23,7 @@ const ExtensionHandler = () => {
         const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/cache/${source}`);
         if (res.status === 200) {
           setExtensionData(res.data);
+          processData();
         } else if (res.status === 404) {
           alert("Data not found");
         }
@@ -36,12 +37,6 @@ const ExtensionHandler = () => {
 
     fetchData();
   }, [source]);
-
-  useEffect(() => {
-    if (extensionData) {
-      processData();
-    }
-  }, [extensionData]);
 
   const processData = async () => {
     if (!extensionData) return;
