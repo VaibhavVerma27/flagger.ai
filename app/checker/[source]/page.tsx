@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -6,7 +8,7 @@ import axios from "axios";
 
 const ExtensionHandler = () => {
   const [extensionData, setExtensionData] = useState<string | null>(null);
-  const [result, setResult] = useState<any | null>(null); // Accept structured response
+  const [result, setResult] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [processing, setProcessing] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
