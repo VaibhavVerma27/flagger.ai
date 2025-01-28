@@ -1,0 +1,43 @@
+<svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1200 600"
+        fill="none"
+        class="w-full h-full"
+>
+    <rect width="1200" height="600" fill="url(#gradient-bg)" />
+    <circle cx="300" cy="300" r="150" fill="url(#ai-gradient)" opacity="0.8" />
+    <circle cx="900" cy="300" r="150" fill="url(#ai-gradient)" opacity="0.8" />
+    <g fill="#ffffff" opacity="0.6">
+        <rect x="150" y="100" width="900" height="400" rx="20" ry="20" />
+        <text
+                x="600"
+                y="280"
+                fill="#ffffff"
+                text-anchor="middle"
+                font-family="Arial, Helvetica, sans-serif"
+                font-size="48"
+        >
+            AI Terms Analyzer
+        </text>
+        <text
+                x="600"
+                y="350"
+                fill="#d4d4d4"
+                text-anchor="middle"
+                font-family="Arial, Helvetica, sans-serif"
+                font-size="24"
+        >
+            Simplifying the complex with AI
+        </text>
+    </g>
+    <defs>
+        <linearGradient id="gradient-bg" x1="0" y1="0" x2="1200" y2="600" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#1e293b" />
+            <stop offset="1" stop-color="#111827" />
+        </linearGradient>
+        <radialGradient id="ai-gradient" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse">
+            <stop offset="0.1" stop-color="#ef4444" />
+            <stop offset="1" stop-color="#7f1d1d" />
+        </radialGradient>
+    </defs>
+</svg>

@@ -48,8 +48,8 @@ const validateQdrantConnection = async (): Promise<void> => {
 };
 
 const ensureCollection = async (
-    collectionName: string,
-    vectorSize: number
+  collectionName: string,
+  vectorSize: number
 ): Promise<void> => {
     if (!collectionName || !vectorSize) {
         throw new Error('Collection name and vector size are required');
@@ -115,8 +115,8 @@ const ensureCollection = async (
 };
 
 const createVectorStore = async (
-    text: string,
-    collectionName: string
+  text: string,
+  collectionName: string
 ): Promise<void> => {
     if (!text?.trim()) {
         throw new Error('No text provided for vector store creation');
@@ -136,7 +136,7 @@ const createVectorStore = async (
     }
 
     const embeds = await Promise.all(
-        documentTexts.map(text => embeddings.embedQuery(text))
+      documentTexts.map(text => embeddings.embedQuery(text))
     );
 
     if (!embeds.length || !embeds[0].length) {
@@ -212,7 +212,7 @@ const chunkText = (text: string, maxChunkSize: number = 15000): string[] => {
 };
 
 const getBotResponse = async (
-    collectionName: string,
+  collectionName: string,
 ): Promise<string> => {
     try {
         const allPoints = await getAllCollectionPoints(collectionName);
@@ -222,19 +222,20 @@ const getBotResponse = async (
         }
 
         const fullContext = allPoints
-            .map(point => point.payload?.text || '')
-            .join(" ");
+          .map(point => point.payload?.text || '')
+          .join(" ");
 
         // Split context into manageable chunks
         const contextChunks = chunkText(fullContext);
         const analysisPromises = contextChunks.map(async (chunk) => {
-            const prompt = `🔍 Analyze this section of the terms and conditions for flaws, unclear language, data vulnerabilities, and security concerns. Use emojis in your output to highlight issues (e.g., ⚠️ for warnings, 🔒 for security, 🛑 for critical concerns). List findings clearly and concisely in bullet points. Text to analyze: ${chunk}.`
+            const prompt = `You are a helpful bot which warns the user about various Cautions in Terms and Conditions of a Website. Analyze this section of the terms and conditions for flaws, unclear language, data vulnerabilities, and security concerns. If you find any issues, list them clearly. Here is the text section to analyze: ${chunk}`;
+
             try {
                 const completion = await groqClient.chat.completions.create({
                     messages: [{ role: 'user', content: prompt }],
-                    model: 'llama-3.1-8b-instant',
+                    model: 'llama-3.3-70b-versatile',
                 });
-                
+
                 return completion.choices[0]?.message?.content ?? '';
             } catch (error) {
                 console.error('Error processing chunk:', error);
@@ -244,10 +245,10 @@ const getBotResponse = async (
 
         // Process all chunks and combine results
         const chunkResults = await Promise.all(analysisPromises);
-        
+
         // Combine and summarize the results
         const combinedAnalysis = chunkResults.filter(result => result).join('\n\n');
-        
+
         if (!combinedAnalysis) {
             return 'Unable to analyze the terms and conditions';
         }
@@ -257,7 +258,7 @@ const getBotResponse = async (
 
         const finalSummary = await groqClient.chat.completions.create({
             messages: [{ role: 'user', content: summaryPrompt }],
-            model: 'llama-3.1-8b-instant',
+            model: 'llama3-8b-8192',
         });
 
         return finalSummary.choices[0]?.message?.content ?? 'No content';
@@ -269,6 +270,13 @@ const getBotResponse = async (
     }
 };
 
+const sanitizeCollectionName = (name: string): string => {
+    return name
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9_-]/g, '_');
+};
+
 export async function POST(request: Request) {
     try {
         const  { text, collectionNameU } = await request.json();
@@ -277,7 +285,8 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'website name and text is required' }, { status: 400 });
         }
 
-        const collectionName = decodeURIComponent(collectionNameU)
+        const decodedName = decodeURIComponent(collectionNameU);
+        const collectionName = sanitizeCollectionName(decodedName);
 
         const alreadyProcessed = await prisma.website.findFirst({where: {websiteURL: collectionName}});
 
