@@ -90,7 +90,7 @@ const ExtensionHandler: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center px-4 py-6">
       <h1 className="text-4xl md:text-5xl font-bold text-red-500 mb-6 text-center transition-all duration-300 ease-in-out">
-        Extension Data Analyzer
+        Flagger.ai T&C Analyzer
       </h1>
       <div className="w-full max-w-3xl p-6 bg-gray-800 rounded-lg shadow-lg transition-all duration-300 ease-in-out">
         {error ? (
