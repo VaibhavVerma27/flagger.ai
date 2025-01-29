@@ -228,7 +228,15 @@ const getBotResponse = async (
         // Split context into manageable chunks
         const contextChunks = chunkText(fullContext);
         const analysisPromises = contextChunks.map(async (chunk) => {
-            const prompt = `You are a helpful bot which warns the user about various Cautions in Terms and Conditions of a Website. Analyze this section of the terms and conditions for flaws, unclear language, data vulnerabilities, and security concerns. If you find any issues, list them clearly. Here is the text section to analyze: ${chunk}`;
+            const prompt = `You are a helpful bot that analyzes a website’s Terms and Conditions for ⚠️ flaws, unclear language, data risks, and security concerns.
+                            For each issue found, highlight the severity using colors:
+
+                            {red} 🔴 Critical Risks: {/red} Severe security/data vulnerabilities or legal traps.
+                            {orange} 🟠 Moderate Risks: {/orange} Ambiguous terms, potential data misuse, or unfair clauses.
+                            {yellow} 🟡 Minor Concerns: {/yellow} Poor wording, misleading phrases, or unclear policies.
+                            for above three colors, if you want to show me critical risk for example, then put {red} before the text and {/red} after the text, which you want to highlight as critical risk's title, do the same for moderate and minor concerns too.
+                            Analyze the following text and clearly list all issues: ${chunk}\
+                            MAKE SURE YOU DO NOT ANSWER IN MORE THAN 100-200 words, i want the output to be very concise and to the point.`;
 
             try {
                 const completion = await groqClient.chat.completions.create({
