@@ -228,7 +228,14 @@ const getBotResponse = async (
         // Split context into manageable chunks
         const contextChunks = chunkText(fullContext);
         const analysisPromises = contextChunks.map(async (chunk) => {
-            const prompt = `You are a helpful bot which warns the user about various Cautions in Terms and Conditions of a Website. Analyze this section of the terms and conditions for flaws, unclear language, data vulnerabilities, and security concerns. If you find any issues, list them clearly. Here is the text section to analyze: ${chunk}`;
+            const prompt = `You are a helpful bot that analyzes a website’s Terms and Conditions for ⚠️ flaws, unclear language, data risks, and security concerns.
+                            For each issue found, highlight the severity using colors:
+
+                            {red} 🔴 Critical Risks: {/red} Severe security/data vulnerabilities or legal traps.
+                            {orange} 🟠 Moderate Risks: {/orange} Ambiguous terms, potential data misuse, or unfair clauses.
+                            {yellow} 🟡 Minor Concerns: {/yellow} Poor wording, misleading phrases, or unclear policies.
+                            Analyze the following text and clearly list all issues:
+                            ${chunk}`;
 
             try {
                 const completion = await groqClient.chat.completions.create({

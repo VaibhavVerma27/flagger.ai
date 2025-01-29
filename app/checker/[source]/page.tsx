@@ -22,7 +22,7 @@ const ExtensionHandler = () => {
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-      setError(null); // Reset error
+      setError(null);
       try {
         const res = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/cache/${source}`
@@ -57,7 +57,7 @@ const ExtensionHandler = () => {
       );
 
       if (response.status === 200) {
-        setResult(response.data); // Handle structured response
+        setResult(response.data);
       } else {
         setResult("Failed to process data.");
       }
@@ -67,6 +67,13 @@ const ExtensionHandler = () => {
     } finally {
       setProcessing(false);
     }
+  };
+
+  const parseResult = (text: string) => {
+    return text.replace(/\{red\}(.*?)\{\/red\}/g, '<span class="text-red-500">$1</span>')
+               .replace(/\{orange\}(.*?)\{\/orange\}/g, '<span class="text-orange-500">$1</span>')
+               .replace(/\{yellow\}(.*?)\{\/yellow\}/g, '<span class="text-yellow-500">$1</span>')
+               .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   };
 
   if (loading) {
@@ -121,11 +128,10 @@ const ExtensionHandler = () => {
         {result && (
           <div className="mt-6 bg-gray-700 p-4 rounded text-gray-200">
             <h2 className="text-lg font-semibold mb-2">Result</h2>
-            <pre className="whitespace-pre-wrap break-words">
-              {typeof result === "string"
-                ? result
-                : JSON.stringify(result, null, 2)}
-            </pre>
+            <pre
+              className="whitespace-pre-wrap break-words"
+              dangerouslySetInnerHTML={{ __html: parseResult(typeof result === "string" ? result : JSON.stringify(result, null, 2)) }}
+            ></pre>
           </div>
         )}
       </div>
