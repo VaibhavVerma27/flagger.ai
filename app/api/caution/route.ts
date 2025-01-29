@@ -234,8 +234,9 @@ const getBotResponse = async (
                             {red} 🔴 Critical Risks: {/red} Severe security/data vulnerabilities or legal traps.
                             {orange} 🟠 Moderate Risks: {/orange} Ambiguous terms, potential data misuse, or unfair clauses.
                             {yellow} 🟡 Minor Concerns: {/yellow} Poor wording, misleading phrases, or unclear policies.
-                            Analyze the following text and clearly list all issues:
-                            ${chunk}`;
+                            for above three colors, if you want to show me critical risk for example, then put {red} before the text and {/red} after the text, which you want to highlight as critical risk's title, do the same for moderate and minor concerns too.
+                            Analyze the following text and clearly list all issues: ${chunk}\
+                            MAKE SURE YOU DO NOT ANSWER IN MORE THAN 100-200 words, i want the output to be very concise and to the point.`;
 
             try {
                 const completion = await groqClient.chat.completions.create({
