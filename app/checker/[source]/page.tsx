@@ -29,6 +29,7 @@ const ExtensionHandler = () => {
         );
         if (res.status === 200) {
           setExtensionData(res.data);
+          await processData();
         } else if (res.status === 404) {
           setError("Data not found.");
         }
