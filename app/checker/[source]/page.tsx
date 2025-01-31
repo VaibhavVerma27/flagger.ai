@@ -29,6 +29,7 @@ const ExtensionHandler: React.FC = () => {
         const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/cache/${source}`)
         if (res.status === 200) {
           setExtensionData(res.data)
+          await processData();
         } else if (res.status === 404) {
           setError("Data not found.")
         }
